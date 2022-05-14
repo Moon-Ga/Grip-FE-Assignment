@@ -1,6 +1,6 @@
 const baseUrl = 'http://www.omdbapi.com';
 
-const getParams = (s: string, page: string) => {
+const getParams = (s: string, page: number) => {
   const apiKey = process.env.REACT_APP_API_KEY;
   const params = {
     apiKey,
@@ -9,4 +9,4 @@ const getParams = (s: string, page: string) => {
   };
   return params;
 };
-export { getParams, baseUrl };
+export { baseUrl, getParams };

@@ -1,3 +1,4 @@
 import useAtom from './useAtom';
+import useInfiniteScroll from './useInfiniteScroll';
 
-export default useAtom;
+export { useAtom, useInfiniteScroll };

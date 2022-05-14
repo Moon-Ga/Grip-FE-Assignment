@@ -1,74 +1,58 @@
-import { movieListState } from 'states';
-import useRecoil from 'hooks';
-import {
-  FormEvent,
-  MouseEventHandler,
-  MutableRefObject,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
-import useSWR from 'swr';
-import { baseUrl, fetcher, getParams } from 'libs/swr';
+import { FormEvent, useRef } from 'react';
+import { CancelIcon, SearchIcon } from 'assets';
+import { useAtom } from 'hooks';
+import { movieListState, inputValueState, pageIndexState } from 'states';
+import getMovieList from 'libs/axios';
+import { totalResultsState } from 'states/RecoilAtoms';
 
 function SearchBar() {
-  const [movieList, setMovieList, resetMovieList] = useRecoil(movieListState);
-
-  const [inputValue, setInputValue] = useState<string>('');
-
+  const [movieList, setMovieList, resetMovieList] = useAtom(movieListState);
+  const [inputValue, setInputValue] = useAtom(inputValueState);
+  const [, setPageIndex] = useAtom(pageIndexState);
+  const [, setTotalResults] = useAtom(totalResultsState);
   const inputRef = useRef<HTMLInputElement>(null);
-
-  const { data, error } = useSWR(
-    [baseUrl, getParams(inputValue, '1')],
-    fetcher
-  );
 
   const onSearch = (e: FormEvent) => {
     e.preventDefault();
-    if (inputRef.current !== null) {
+    if (inputRef.current !== null && inputRef.current.value !== inputValue) {
+      resetMovieList();
+      setPageIndex(1);
       setInputValue(inputRef.current.value);
+      getMovieList(inputRef.current.value, 1).then((res) => {
+        if (res.Search) {
+          setMovieList(res.Search);
+          setTotalResults(res.totalResults);
+        }
+      });
     }
   };
 
   const resetSearch = () => {
     if (inputRef.current !== null) {
       inputRef.current.value = '';
-      setInputValue('');
-      resetMovieList();
     }
   };
 
-  useEffect(() => {
-    console.log(data);
-    if (data?.Search) {
-      setMovieList(data.Search);
-    }
-  }, [data, setMovieList]);
-
   return (
-    <div className="relative w-full h-16 shadow-2xl">
-      <form className="w-full h-full bg-white" onSubmit={onSearch}>
-        <span className="absolute left-0 p-3 text-4xl material-symbols-outlined">
-          search
-        </span>
+    <div className="sticky top-0 flex justify-end w-full h-20 bg-black shadow-2xl">
+      <form className="w-[calc(100%-7rem)] relative h-full" onSubmit={onSearch}>
+        <SearchIcon className="absolute top-0 left-0 h-full p-3" />
         <input
           ref={inputRef}
           defaultValue={inputValue}
           type="text"
           placeholder="Search Movies"
-          className="w-[calc(100%-14rem)] h-full text-3xl ml-16 focus:outline-black"
+          className="bg-white w-[calc(100%-7rem)] h-full px-20 text-5xl focus:outline-black"
         />
-        <span
-          aria-hidden="true"
+        <p className="absolute top-0 right-40">{movieList.length}</p>
+        <CancelIcon
           onClick={resetSearch}
-          className="absolute p-3 text-4xl right-24 material-symbols-outlined"
-        >
-          cancel
-        </span>
+          className="absolute top-0 h-full p-3 cursor-pointer right-28"
+        />
         <button
           type="submit"
           onClick={onSearch}
-          className="absolute right-0 h-full p-3 text-2xl"
+          className="absolute top-0 h-full p-3 text-3xl border-2 w-28 bg-cyan-500"
         >
           Search
         </button>

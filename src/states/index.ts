@@ -1,3 +1,15 @@
-import { movieListState, favoriteListState } from './RecoilAtoms';
+import {
+  movieListState,
+  inputValueState,
+  totalResultsState,
+  pageIndexState,
+  favoriteListState,
+} from './RecoilAtoms';
 
-export { movieListState, favoriteListState };
+export {
+  movieListState,
+  inputValueState,
+  totalResultsState,
+  pageIndexState,
+  favoriteListState,
+};
