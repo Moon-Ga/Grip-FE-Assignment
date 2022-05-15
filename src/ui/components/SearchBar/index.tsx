@@ -1,15 +1,25 @@
 import { FormEvent, useRef } from 'react';
-import { CancelIcon, SearchIcon } from 'assets';
-import { useAtom } from 'hooks';
-import { movieListState, inputValueState, pageIndexState } from 'states';
+
+import useAtom from 'hooks';
+import {
+  movieListState,
+  inputValueState,
+  pageIndexState,
+  errorMessageState,
+  totalResultsState,
+} from 'states';
 import getMovieList from 'libs/axios';
-import { totalResultsState } from 'states/RecoilAtoms';
+
+import { CancelIcon, SearchIcon } from 'assets';
 
 function SearchBar() {
-  const [movieList, setMovieList, resetMovieList] = useAtom(movieListState);
-  const [inputValue, setInputValue] = useAtom(inputValueState);
-  const [, setPageIndex] = useAtom(pageIndexState);
-  const [, setTotalResults] = useAtom(totalResultsState);
+  const [, setMovieList, resetMovieList] =
+    useAtom<TMovieItem[]>(movieListState);
+  const [, setErrorMessage] = useAtom<string>(errorMessageState);
+  const [inputValue, setInputValue] = useAtom<string>(inputValueState);
+  const [, setPageIndex] = useAtom<number>(pageIndexState);
+  const [, setTotalResults] = useAtom<number>(totalResultsState);
+
   const inputRef = useRef<HTMLInputElement>(null);
 
   const onSearch = (e: FormEvent) => {
@@ -22,6 +32,17 @@ function SearchBar() {
         if (res.Search) {
           setMovieList(res.Search);
           setTotalResults(res.totalResults);
+        } else if (res.Error) {
+          switch (res.Error) {
+            case 'Too many results.':
+              setErrorMessage('검색 결과가 너무 많습니다.');
+              break;
+            case 'Movie not found!':
+              setErrorMessage('검색 결과가 없습니다. ');
+              break;
+            default:
+              setErrorMessage('오류가 발생하였습니다.');
+          }
         }
       });
     }
@@ -34,17 +55,17 @@ function SearchBar() {
   };
 
   return (
-    <div className="sticky top-0 flex justify-end w-full h-20 bg-black shadow-2xl">
-      <form className="w-[calc(100%-7rem)] relative h-full" onSubmit={onSearch}>
+    <header className="sticky top-0 z-10 flex justify-end w-full h-20 bg-white shadow-common">
+      <img src="/logo.png" alt="favorite movies" className="h-full" />
+      <form className="relative w-full h-full" onSubmit={onSearch}>
         <SearchIcon className="absolute top-0 left-0 h-full p-3" />
         <input
           ref={inputRef}
           defaultValue={inputValue}
           type="text"
           placeholder="Search Movies"
-          className="bg-white w-[calc(100%-7rem)] h-full px-20 text-5xl focus:outline-black"
+          className="bg-white w-[calc(100%-7rem)] h-full px-20 text-4xl focus:outline-black"
         />
-        <p className="absolute top-0 right-40">{movieList.length}</p>
         <CancelIcon
           onClick={resetSearch}
           className="absolute top-0 h-full p-3 cursor-pointer right-28"
@@ -52,12 +73,12 @@ function SearchBar() {
         <button
           type="submit"
           onClick={onSearch}
-          className="absolute top-0 h-full p-3 text-3xl border-2 w-28 bg-cyan-500"
+          className="absolute top-0 h-full p-3 text-3xl text-white bg-black w-28"
         >
           Search
         </button>
       </form>
-    </div>
+    </header>
   );
 }
 

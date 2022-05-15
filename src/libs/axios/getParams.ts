@@ -1,4 +1,4 @@
-const baseUrl = 'http://www.omdbapi.com';
+const baseUrl = process.env.REACT_APP_BASEURL as string;
 
 const getParams = (s: string, page: number) => {
   const apiKey = process.env.REACT_APP_API_KEY;

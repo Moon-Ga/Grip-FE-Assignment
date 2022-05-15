@@ -1,9 +1,9 @@
 /// <reference types="react-scripts" />
 
-interface IMovieItem {
+type TMovieItem = {
   Title: string;
   Year: string;
   imdbID: string;
   Type: string;
   Poster: string;
-}
+};
