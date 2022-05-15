@@ -57,7 +57,7 @@ function Favorites() {
           <section className="absolute flex flex-col items-center w-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2 animate-pulse">
             <TriangleErrorIcon className="w-1/4 mx-auto fill-yellow-500" />
             <span className="text-3xl max-w-screen w-max">
-              즐겨찾기 한 영화가 없습니다.
+              즐겨찾기 항목이 없습니다.
             </span>
           </section>
         )}

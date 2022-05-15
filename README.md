@@ -1,46 +1,176 @@
-# Getting Started with Create React App
+# 그립컴퍼니 웹프론트엔드 사전과제
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+사용 기술: Create React App, React Router,TypeScript, Recoil, Tailwind CSS, PostCSS, Axios, storejs, react-dnd, ESlint, Prettier
 
-## Available Scripts
+## 1. 구현된 과제 확인 방법
 
-In the project directory, you can run:
+### 1) Vercel로 배포된 페이지
 
-### `npm start`
+🔗 [링크](https://grip-fe-assignment.vercel.app/)
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+전반적인 기능을 모두 사용해볼 수 있도록 Vercel로 배포하였습니다.
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+### 2) 레포지토리 클론
 
-### `npm test`
+```
+git clone https://github.com/Moon-Ga/Grip-FE-Assignment.git
+cd Grip-FE-Assignment
+npm install
+npm start
+```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+코드를 더 면밀하게 살펴보기 위해 로컬 환경에서 실행해볼 수 있습니다.
 
-### `npm run build`
+## 2. 폴더 구조
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+```
+📁src
+├─ 📁assets
+├─ 📁hooks
+├─ 📁libs
+│  ├─ 📁axios
+│  └─ 📁storejs
+├─ 📁states
+├─ 📁ui
+│  ├─ 📁components
+│  │  ├─ BottomNav
+│  │  ├─ Modal
+│  │  ├─ MovieItem
+│  │  └─ SearchBar
+│  ├─ 📁layouts
+│  │  └─ MainLayout
+│  └─ 📁pages
+│     ├─ favorites
+│     ├─ notfound
+│     └─ search
+├─ App.tsx
+├─ index.css
+└─ index.tsx
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+- 파일의 성격에 따라 폴더를 구분하였습니다.
+  - 아이콘과 이미지와 같은 자료들은 assets
+  - Custom hook은 hooks
+  - 라이브러리 사용과 관련된 코드들은 libs
+  - 상태관리 관련 코드는 states
+  - 컴포넌트나 페이지와 같은 화면과 관련된 코드들은 ui
+- 총 세 개의 페이지로 구성되어 있으며, React Router Dom을 통해 각각의 주소를 할당해주었습니다.
+- 공통된 부분을 작성한 레이아웃인 MainLayout이 있습니다.
+- 페이지에서 사용되는 컴포넌트들은 모두 components 폴더에 모아두었습니다.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## 3. 구현 방향성
 
-### `npm run eject`
+- 높은 수준의 제약을 요구하는 ESlint를 설정하여 코드 오류를 최소화하려 노력했습니다.
+- 전역으로 관리할 상태와 지역적으로 관리할 상태를 구분하여 작성함으로써 무분별한 전역 상태관리를 줄여보려 했습니다.
+- 코드 재사용성을 고려하여 custom hook, 라이브러리 관련 코드 재사용 등을 시도하였습니다.
+- 라이브러리를 활용하되, 사용할 줄 모르거나 무작정 사용하는 코드는 지양하였습니다.
+- 되도록이면 semantic한 태그를 사용해보려 했습니다.
+- 불필요한 렌더링을 최소화 하려 노력했습니다.
+- 더 좋은 코드나 리팩토링 아이디어가 떠오르면 즉각적으로 이를 반영해보며 코드를 개선해 나갔습니다.
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+## 4. 구현 상세 설명
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+기본 구현 및 추가 구현 모두 완료하였습니다.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+### 0) ESlint와 Prettier
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+ESlint의 경우 Create-React-App 개발팀이 권장하는 대로 `eslint-config-react-app`을 기반으로 하였습니다. 이후 높은 사용률을 보이는 `eslint-config-airbnb`와 관련 peer dependency를 적용하여 기본적인 코드 스타일을 설정하였고, 이후 `eslint-plugin-react`, `eslint-plugin-prettier`를 적용해줌으로써 강한 강도의 제약을 걸었습니다. ESlint는 적용 순서가 굉장히 중요하기 때문에, 각각의 설정들이 어떤 역할을 하는지 공부하고 그에 맞춰 순서를 정해 `.eslintrc`의 `extends`에 추가하였습니다.
 
-## Learn More
+### 1) 패키지 활용에 대한 설명
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+대부분의 코드들은 `index.ts`에서 일괄적으로 import 후 export하여 사용하였습니다.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+### Recoil
+
+#### states
+
+전역으로 관리할 상태는 모두 `states` 폴더에 넣어두었습니다.
+
+- movieListState: 검색을 통한 API 통신으로부터 돌아오는 영화 목록을 담을 배열입니다.
+- errorMessageState: 검색을 통한 API 통신으로부터 에러가 반환되면 그에 대한 메시지를 담을 문자열입니다.
+- inputValueState: 검색을 할 때 검색창에 입력된 내용을 담을 문자열입니다.
+- pageIndexState: API 통신 시 필요한 페이지 파라미터에 대한 숫자입니다.
+- totalResultsState: 검색 결과의 총 갯수를 의미하는 숫자입니다.
+- favoriteListState: 즐겨찾기 목록을 담을 배열입니다.
+- modalContentState: 즐겨찾기 등록 및 해제 시 뜨게 되는 모달창 안에 들어갈 내용들에 대한 객체입니다.
+
+#### useAtom
+
+커스텀 훅으로써, `useRecoilState`, `useSetRecoilState`, `useResetRecoilState`를 배열 하나로 필요에 따라 사용할 수 있게 해주는 훅입니다.
+
+### React Router
+
+가장 기본적인 형태로 `Routes`안에 `Route`를 넣고, 레이아웃인 `MainLayout`으로 경로에 따른 컴포넌트들을 감싸는 것으로 구현하였습니다. 잘못된 주소가 입력될 경우를 생각하여 `'*'`에 대한 페이지도 설정하였습니다.
+
+### Tailwind CSS
+
+CSS파일을 사용하지 않고 인라인 스타일로 작성하는 Tailwind CSS를 사용하였습니다. 모든 요소들을 rem과 %로 작성함으로써 반응형으로 구현하려 노력했습니다. 또한, 필요에 따라 custom theme을 만들어 애니메이션이나 box-shadow 등을 구현하였습니다. 가독성을 위해 속성 순서를 일관되게 정렬하였습니다.
+
+### PostCSS
+
+PostCSS의 auto-prefixer 기능을 사용하여 CSS 작성 시 자동적으로 필요한 접두사가 붙도록 하였습니다.
+
+### Axios
+
+#### getParams
+
+API 통신을 위한 요청을 보낼 때, Api키, 사용자가 입력한 `inputValue`, 그리고 현재 페이지인 `pageIndex`를 보내야 하므로 이를 편리하게 반환할 수 있는 함수를 작성하였습니다.
+
+### storejs
+
+로컬 저장소에 저장된 즐겨찾기 된 항목을 판별하기 위한 `isFavorite` 함수를 만들었습니다. 이를 활용하여 초기 즐겨찾기 화면을 설정하는 것은 물론, 이에 따른 조건부 스타일링과 코드 실행을 구현할 수 있었습니다.
+
+### react-dnd
+
+즐겨찾기 목록에서 마우스 드래그 앤 드롭을 구현하였으나, 코드가 지저분하고 수정할 부분이 많아 보입니다. 현재는 드래그 하여 호버만 이루어져도 리스트의 순서가 변화하게 되는데, 나중에는 호버 시에는 시각적으로만 밀리고, 실제로 드롭을 했을 때 적용되도록 수정해야 할 것으로 보입니다.
+
+### 2) 검색 페이지
+
+하단 탭바 중 좌측에 해당하는 검색 페이지입니다.
+
+- 첫 진입 시 `movieListState`가 비어있으므로 "검색 결과가 없습니다."가 출력됩니다.
+- 검색어를 입력하면 `SearchBar` 컴포넌트로부터 API 통신이 이루어지고, 이 때 `pageIndex`와 `totalResults`가 설정됩니다. 만약 사용자가 검색창에 똑같은 내용을 검색할 경우, 조건문으로 인해 검색이 이루어지지 않으며, 다른 내용으로 검색할 경우 `pageIndex`, `totalResults`, `movieListState` 등 모든 것이 초기화됩니다.
+- 스크롤을 맨 아래까지 내리면 `Intersection Observer API`로 인해 새로운 API 통신이 이루어지고, 이것이 반복되면서 무한 스크롤 기능이 나타납니다. 교차가 발생하는 순간 `unobserve`를 하고, await을 활용한 통신이 이루어진 뒤, 내용이 업데이트 됨에 따라 새로운 `target`을 `observe`하기 시작합니다. 이로써 반복적인 통신이 발생하지 않게 됩니다.
+- 항목을 선택하면 모달창이 등장하며, 이 모달창에서 항목을 즐겨찾기에 추가하거나 제거할 수 있습니다. 항목이 추가될 시 `favoriteListState`와 로컬스토리지에 정보가 동시 저장됩니다.
+
+### 3) 즐겨찾기 페이지
+
+하단 탭바 중 우측에 해당하는 즐겨찾기 페이지입니다.
+
+- 첫 진입 시 로컬스토리지로부터 정보를 불러와 `favoriteListState`에 저장합니다. 만약 정보가 하나도 없다면 "즐겨찾기 항목이 없습니다."라는 문구가 나옵니다.
+- 항목을 선택하면 모달창이 등장하며, 이 모달창에서 항목을 즐겨찾기에서 제거할 수 있습니다. 항목이 제거될 시 `favoriteListState`와 로컬스토리지에서 정보가 삭제되며, 그 즉시 즐겨찾기 목록에서 사라지게 됩니다.
+- 로컬 스토리지의 'favoirtes' 키 값에 모든 정보가 객체로 이루어진 배열로 저장되어 있고, 고유한 순서가 존재하기 때문에 새로고침 시나 즐겨찾기 추가, 제거 시에도 순서가 유지됩니다.
+- 창을 껐다가 다시 켰을 때도 유지됩니다.
+
+### 4) 컴포넌트 별 추가 설명
+
+#### SearchBar
+
+검색창 컴포넌트로써, 검색했을 때 첫 통신과 에러메시지를 담당하는 컴포넌트입니다.
+
+- 검색이 이루어질 시 `movieListState`를 비우고 해당 검색어에 대한 첫 페이지의 응답으로 다시 채웁니다.
+- 응답이 Error로 올 시, "검색 결과가 너무 많습니다", "검색 결과가 없습니다", 그리고 "오류가 발생하였습니다" 총 세 가지로 `errorMessageState`를 설정합니다. 이에 따라 사용자는 어떤 오류인지 확인할 수 있습니다.
+
+#### MovieItem
+
+목록에서 각각의 항목을 렌더해주는 컴포넌트입니다.
+
+- `movieListState`의 정보를 순환하며 항목을 생성합니다.
+- 항목을 클릭할 시 즐겨찾기 추가와 제거가 이루어질 수 있도록 모달창을 팝업합니다.
+- `modalContentState`에 선택된 항목의 정보들이 저장이 되고, 이를 `Modal` 컴포넌트에서 활용하는 방식입니다.
+- `isFavorite()`에 따라 즐겨찾기 상태라면 테두리 및 별표의 색이 변합니다.
+- react-dnd를 활용하여 드래그 앤 드롭을 이 컴포넌트에서 구현하였습니다. useDrag와 useDrop을 활용하여 드래그와 드롭 상태를 판별하고, 드래그 중인 항목과 대상 항목 간의 index를 비교하여 index가 일치하지 않을 시 서로의 인덱스로 splice 하는 방식을 선택하였습니다.
+
+#### Modal
+
+즐겨찾기 등록과 해제를 담당하는 모달창입니다.
+
+- 선택된 항목의 포스터가 가운데에 뜨며, 등록과 해제를 담당하는 버튼들이 등장합니다.
+- 모달창이 떠있는 동안에는 스크롤을 할 수 없으며, 배경을 클릭하면 모달창이 닫힙니다.
+- 모달창에서 등록 혹은 해제를 할 시 `favoriteListState`가 업데이트 되는 동시에 로컬 스토리지의 `favorites` 키 값의 배열 또한 업데이트 됩니다.
+
+## 5. 느낀 점
+
+아무리 좋은 패키지, 라이브러리, 프레임워크 등이 존재한다고 해도, 이를 활용하기 위한 기초 지식이 없다면 아무 소용 없다는 것을 또 한번 느꼈습니다. 잘 알고 있다고 생각한 ESlint 마저도 막상 깊게 파고 들자 제대로 사용하는데에 많은 시간이 들었고, 이전에 사용해봤던 axios, Tailwind CSS, SWR 등 다양한 라이브러리들 역시 다시 사용해보려 하니 쉽지 않았습니다.  
+다른 사람들이 짜놓은 코드를 그대로 복사하여 활용하면 빠른 구현이 가능하겠지만, 그 구현이 온전히 자신의 것이 아니고 추후 비슷한 구현을 해야하는 상황이 왔을 때 또 다시 막힐 것이라고 생각하여 최대한 스스로 구현하려 노력하였습니다. 그러다 보니 실제 구현에 투자한 시간보다 구현을 하기에 앞서 사전 공부하는 시간이 길어졌고, 결국 구현은 수월하게 해냈으나 디자인적으로는 만족스러운 결과를 만들어 내지 못하였습니다.  
+하지만 이 과제에 구현된 사항들에 대해 의문이 있거나 모르는 상태로 구현한 것이 단 하나도 없으며, 결국 기본 구현과 추가 구현까지 모두 해냈다는 것을 미루어 보아, 밤을 새가며 공부한 내용들이 헛되지 않았음이 분명하다고 느껴 자신감이 더 커졌습니다.
